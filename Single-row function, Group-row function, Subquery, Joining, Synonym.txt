@@ -1,0 +1,75 @@
+Single-row function
+-------------------
+1.	Display student name,id and program for program eee.
+
+SELECT name,id,program FROM	all_student
+WHERE	LOWER(program) = 'eee';
+
+2.	Find the length for name nazia alfaz from teacher table
+
+select length(name) from all_teachers where name='nazia alfaz';
+
+3.	concat name,program as nameprogram from all_student 
+
+select concat(name,program) as nameprogram from all_student
+
+
+
+Group-row function
+-------------------
+1.	Find maximum salary for teacher which domain is csc
+
+select max(balance) from all_teachers where domain like'CSC%'
+
+2.	How many row for cse program in all_student table
+
+select count(*) from all_student where program='CSE'
+
+3.	Find the minimum and maximum hire_date from all_teachers table
+
+select min(hire_date),max(hire_date) from all_teachers
+
+
+
+Subquery
+--------
+1.	Which teachers have a salary greater than 'asif iqbalâ€™ salary?
+
+select name,balance from all_teachers where balance>(select balance from all_teachers where name='asif iqbal')
+
+2.	which student have a cgpa less than 'waskiqure' cgpa?
+
+select name,cgpa from all_student where cgpa<(select cgpa from all_student where name='Waskiqure')
+
+3.	display name who join after nazia alfaz
+
+select name from all_teachers where hire_date>(select hire_date from all_teachers where name='nazia alfaz')
+
+
+
+Joining
+-------
+1.	dispaly name,id,payable_amount of each student
+
+select s.name,s.id,p.payable_amount from all_student s ,payment p where s.id=p.s_id
+
+2.	Write a query to display the name,
+payment_serial, semester and payment_date for all student. 
+
+select s.name,p.payment_serial,p.semester,p.payment_date from all_student s ,payment p where s.id=p.s_id
+
+
+
+Synonym
+--------
+1.	Create a shortened name for the all_student view
+
+CREATE SYNONYM student1 For all_student;
+
+2.	Create a shortened name for the all_teachers view
+
+CREATE SYNONYM teacher For all_teachers;
+
+3.	Create a shortened name for the all_course view
+
+CREATE SYNONYM course For all_course;

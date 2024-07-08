@@ -1,0 +1,210 @@
+Function
+---------
+1.Create a function that returns the total number of student.
+
+CREATE OR REPLACE FUNCTION totalstudent 
+RETURN number AS 
+   total number(2) := 0; 
+BEGIN 
+   SELECT count(*) into total 
+   FROM all_student;  
+   RETURN total; 
+END; 
+/ 
+DECLARE 
+   c number(2); 
+BEGIN 
+   c := totalstudent(); 
+   dbms_output.put_line('Total no. of student: ' || c); 
+END; /
+ 
+
+2.Create a function that returns the total number of teacher.
+
+CREATE OR REPLACE FUNCTION totalteacher 
+RETURN number AS 
+   total number(2) := 0; 
+BEGIN 
+   SELECT count(*) into total 
+   FROM all_teachers;  
+   RETURN total; 
+END; 
+/ 
+DECLARE 
+   c number(2); 
+BEGIN 
+   c := totalteacher(); 
+   dbms_output.put_line('Total no. of teacher: ' || c); 
+END; 
+/
+ 
+
+3.Create a function that returns the total number of suspended student.
+
+CREATE OR REPLACE FUNCTION totalstudent
+RETURN number AS 
+   total number(2) := 0; 
+BEGIN 
+   SELECT count(*) into total 
+   FROM osa where action='Suspended';  
+   RETURN total; 
+END; 
+/ 
+DECLARE 
+   c number(2); 
+BEGIN 
+   c := totalstudent(); 
+   dbms_output.put_line('Total no. of suspended student: ' || c); 
+END; 
+/
+ 
+
+
+Record:
+-------
+1.Create a record that can output the id, name, cgpa, and admission date of the student whose Id is 4
+
+declare
+stu_rec all_student%rowtype;
+begin
+select * into stu_rec from all_student
+where id=4;
+dbms_output.put_line(stu_rec.id||' '||stu_rec.name||' '||stu_rec.cgpa||' '||stu_rec.admission_date);
+end
+/
+
+
+2.Create a record that can output the id, name, domain, and hire date of the teacher whose Id is 2
+
+declare
+teacher_rec all_teachers%rowtype;
+begin
+select * into teacher_rec from all_teachers
+where id=2;
+dbms_output.put_line(teacher_rec.id||' '||teacher_rec.name||' '||teacher_rec.domain||' '||teacher_rec.hire_date);
+end
+/
+
+
+3.Create a record that can output the id, name, domain, and hire date of the course whose Id is 2
+
+declare
+b all_course%rowtype;
+begin
+select * into b from all_course
+where course_code=2;
+dbms_output.put_line(b.course_code||' '||b.course_name||' '||b.credit_count);
+end
+/
+
+ 
+
+
+
+
+
+Package:
+-------
+1.Create a package that contains a procedure which can display the name,cgpa whose 
+id is  passed as its parameter
+
+CREATE OR REPLACE PACKAGE BODY stu_pack AS    
+   PROCEDURE display_name(e all_student.id%TYPE) IS 
+   name all_student.id%TYPE; 
+   BEGIN 
+      SELECT name INTO name
+      FROM all_student
+      WHERE id=e; 
+      dbms_output.put_line('student Name: '|| name); 
+   END display_name; 
+ PROCEDURE display_cgpa(e1 all_student.id%TYPE) IS 
+   cgpa all_student.id%TYPE; 
+   BEGIN 
+      SELECT cgpa INTO cgpa
+      FROM all_student
+      WHERE id=e1; 
+      dbms_output.put_line('student cgpa: '|| cgpa); 
+   END display_cgpa;     
+END stu_pack; 
+/
+
+CREATE OR REPLACE PACKAGE stu_pack AS 
+   PROCEDURE display_name(e all_student.id%type); 
+    PROCEDURE display_cgpa(e1 all_student.id%type); 
+    END stu_pack; 
+
+begin
+stu_pack.display_name('2');
+stu_pack.display_cgpa('2');
+
+end
+ 
+
+2.Create a package that contains a procedure which can display the name,domain whose 
+id is  passed as its parameter from teacher table
+
+CREATE OR REPLACE PACKAGE BODY tea_pack AS  
+   PROCEDURE display_name(e all_teachers.id%TYPE) IS 
+   name all_teachers.name%TYPE; 
+   BEGIN 
+      SELECT name INTO name
+      FROM all_teachers
+      WHERE id=e; 
+      dbms_output.put_line('teachers Name: '|| name); 
+   END display_name; 
+ PROCEDURE display_domain(e1 all_teachers.id%TYPE) IS 
+   domain all_teachers.domain%TYPE; 
+   BEGIN 
+      SELECT domain INTO domain
+      FROM all_teachers
+      WHERE id=e1; 
+      dbms_output.put_line('teachers domain: '|| domain); 
+   END display_domain;     
+END tea_pack; 
+/
+CREATE OR REPLACE PACKAGE tea_pack AS 
+   PROCEDURE display_name(e all_teachers.id%type); 
+    PROCEDURE display_domain(e1 all_teachers.id%type); 
+   
+END tea_pack; 
+select * from all_teachers
+begin
+tea_pack.display_name('2');
+tea_pack.display_domain('2');
+end
+
+ 
+ 
+
+Trigger:
+--------
+1.	Display a trigger that  give reminder when banlance is 0.
+create or replace trigger expenditure_recorder 
+before update  on   all_teachers 
+for each row 
+begin 
+update this_semester_report set expenditure=expenditure+:new.balance-:old.balance;
+end;
+ 
+ 
+2.	CGPA is between 0 to 4
+create or replace trigger marks_value_fixer 
+before update  of marks on   csrt
+for each row 
+begin 
+if :new.marks>100 then
+:new.marks:=100;
+elsif :new.marks<0 then
+:new.marks:=0;
+end if;
+end;
+ 
+ 
+3.	If credit complete is lower or higher than higher than 0 and 148. 
+create or replace trigger result_log
+after update   on   csrt
+begin
+insert into task_log values((select id from loggedinTable),'Updating results',sysdate,SYSTIMESTAMP);
+end;
+ 
+ 
